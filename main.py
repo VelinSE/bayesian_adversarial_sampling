@@ -74,9 +74,16 @@ if __name__ == '__main__':
     ])
 
     transform_test = transforms.Compose([
+        transforms.Resize((36, 36)),
         transforms.ToTensor(),
         normalize,
     ])
+
+    DATA_DIR = '../archive/tiny-imagenet-200' # Original images come in shapes of [3,64,64]
+
+    # Define training and validation data paths
+    TRAIN_DIR = os.path.join(DATA_DIR, 'train') 
+    VALID_DIR = os.path.join(DATA_DIR, 'val', 'images')
 
     if args.dataset == 'CIFAR-10':
         trainset = datasets.CIFAR10(root=datapath, train=True, download=True, transform=transform_train)
@@ -87,6 +94,11 @@ if __name__ == '__main__':
                                      transform=transform_train)
         valset = datasets.CIFAR100(root=datapath, train=False, download=True, transform=transform_test)
         num_classes = 100
+    elif args.dataset == 'TinyImageNet':
+      trainset = datasets.ImageFolder(root=TRAIN_DIR,
+                                     transform=transform_train)
+      valset = datasets.ImageFolder(root=VALID_DIR, transform=transform_test)
+      num_classes = 200
     else:
         raise NotImplementedError('Invalid dataset')
 
